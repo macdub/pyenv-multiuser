@@ -28,7 +28,7 @@ To ensure that the shims work correctly, your profile should look like this:
 ```bash
 # Example Profile Setup
 export PYENV_LOCAL_SHIM="$HOME/.pyenv_local_shim"
-export PATH="$PYENV_LOCAL_SHIM:$HOME/.pyenv/bin:$PATH"
+export PATH="$PYENV_LOCAL_SHIM:$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 ```

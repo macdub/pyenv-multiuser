@@ -7,7 +7,7 @@ if [ -z "$PYENV_ROOT" ]; then
     PYENV_ROOT="${HOME}/.pyenv"
 fi
 
-ALTER_FILES=$(grep -lR '${PYENV_ROOT}/shims' $PYENV_ROOT)
+ALTER_FILES=$(grep -lr '${PYENV_ROOT}/shims' $PYENV_ROOT)
 
 backup_files() {
     SUB="pyenv-multiuser"
@@ -51,6 +51,9 @@ clean_backups() {
 update_multiuser() {
     STATUS=0
     echo "Restoring backups ..."
+    restore_files
+    clean_backups
+
     echo "Performing update ..."
     pyenv update
     STATUS="$?"
@@ -59,8 +62,7 @@ update_multiuser() {
         return $STATUS
     fi
 
-    ALTER_FILES=$(grep -lR '${PYENV_ROOT}/shims' $PYENV_ROOT)
-
+    ALTER_FILES=$(grep -lr '${PYENV_ROOT}/shims' $PYENV_ROOT)
     echo "Performing file backup ..."
     backup_files
 

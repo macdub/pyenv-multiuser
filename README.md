@@ -29,3 +29,4 @@ The `pyenv multiuser update` command is a bit of a wrapper around the *pyenv-upd
     $ pyenv multiuser update
 
 ## Version History
+#### 20210511 v1.0

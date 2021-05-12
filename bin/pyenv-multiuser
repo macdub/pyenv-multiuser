@@ -107,7 +107,8 @@ user_init() {
                 echo "# Add the following to your profile"
                 echo "export PYENV_LOCAL_SHIM=$HOME/.pyenv_local_shim"
                 echo
-                export PYENV_LOCAL_SHIM="$HOME/.pyenv_local_shim"
+                PYENV_LOCAL_SHIM="$HOME/.pyenv_local_shim"
+                export PYENV_LOCAL_SHIM
                 setup_shim_dir
                 ;;
 
@@ -117,6 +118,12 @@ user_init() {
                 echo
         esac
     fi
+
+    echo "# Example Profile Setup"
+    echo '# export PYENV_LOCAL_SHIM="$HOME/.pyenv_local_shim"'
+    echo '# export PATH="$PYENV_LOCAL_SHIM:$HOME/.pyenv/bin:$PATH"'
+    echo '# eval "$(pyenv init -)"'
+    echo '# eval "$(pyenv virtualenv-init -)"'
 }
 
 STATUS=0
@@ -135,10 +142,6 @@ case "$PARAM" in
     update)
         update_multiuser
         STATUS="$?"
-        ;;
-
-    restore)
-        restore_files
         ;;
 
     *)

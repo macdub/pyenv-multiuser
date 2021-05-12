@@ -140,6 +140,11 @@ case "$PARAM" in
         ;;
 
     update)
+        if [ ! -d "$(pyenv root)/plugins/pyenv-update" ]; then
+            echo "The pyenv-update plugin is not installed."
+            exit 0
+        fi
+
         update_multiuser
         STATUS="$?"
         ;;

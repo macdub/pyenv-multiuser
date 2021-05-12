@@ -10,36 +10,48 @@ fi
 ALTER_FILES=$(grep -lR '${PYENV_ROOT}/shims' $PYENV_ROOT)
 
 backup_files() {
+    SUB="pyenv-multiuser"
     for filename in ${ALTER_FILES[@]}; do
+        if [[ "$filename" == *"$SUB"* ]]; then
+            continue
+        fi
+
         backup="$(echo $filename | sed 's/\//__/g')"
         echo "Backing up $filename -> $backup"
-        cp $filename "./backups/$backup"
+        cp $filename "${PYENV_ROOT}/plugins/pyenv-multiuser/backup/$backup"
     done
 }
 
 restore_files() {
-    for filename in $(ls ./backups/); do
+    MU="$(pyenv root)/plugins/pyenv-multiuser/backup"
+    for filename in $(ls "$(pyenv root)/plugins/pyenv-multiuser/backup"); do
         restore=$(echo $filename | sed 's/__/\//g')
         echo "Restoring $filename -> $restore"
-        cp $filename $restore
+        cp "$MU/$filename" $restore
     done
 }
 
 alter_files() {
+    SUB="pyenv-multiuser"
     for filename in ${ALTER_FILES[@]}; do
+        if [[ "$filename" == *"$SUB"* ]]; then
+            continue
+        fi
+
         echo "Altering $filename"
-        sed 's/${PYENV_ROOT}\/shims/${PYENV_LOCAL_SHIM}/g'
+        sed -i'' 's/${PYENV_ROOT}\/shims/${PYENV_LOCAL_SHIM}/g' $filename
     done
 }
 
 clean_backups() {
-    rm ./backups/*
+    BACKUP="$(pyenv root)/plugins/pyenv-multiuser/backup"
+    rm "${BACKUP}/"*
 }
 
 update_multiuser() {
     STATUS=0
-    restore_files()
-    clean_backups()
+    echo "Restoring backups ..."
+    echo "Performing update ..."
     pyenv update
     STATUS="$?"
 
@@ -48,18 +60,25 @@ update_multiuser() {
     fi
 
     ALTER_FILES=$(grep -lR '${PYENV_ROOT}/shims' $PYENV_ROOT)
-    backup_files()
-    alter_files()
+
+    echo "Performing file backup ..."
+    backup_files
+
+    echo "Performing file alterations ..."
+    alter_files
 }
 
 init_multiuser() {
-    backup_files()
-    alter_files()
+    echo "Performing file backup ..."
+    backup_files
+
+    echo "Performing file alterations ..."
+    alter_files
 }
 
 setup_shim_dir() {
-    if [ -e "$PYENV_LOCAL_SHIM" ]; then
-        echo "Directory '$PYENV_LOCAL_SHIM' does not exist. Would you like to create it now? [Y/n]"
+    if [ ! -d "$PYENV_LOCAL_SHIM" ]; then
+        echo -n "Directory '$PYENV_LOCAL_SHIM' does not exist. Would you like to create it now? [Y/n] "
         read YN
         YN=${YN:-y}
 
@@ -75,22 +94,25 @@ setup_shim_dir() {
 }
 
 user_init() {
-    echo "# Add the following to your profile"
 
     if [ -z "$PYENV_LOCAL_SHIM" ]; then
-        echo "PYENV_LOCAL_SHIM not set. Would you like to use the default setting ($HOME/.pyenv_local_shim)? [Y/n]"
+        echo -n "PYENV_LOCAL_SHIM not set. Would you like to use the default setting ($HOME/.pyenv_local_shim)? [Y/n] "
         read USE_DEFAULT
         USE_DEFAULT=${USE_DEFAULT:-y}
 
         case "$USE_DEFAULT" in
             y | Y)
+                echo "# Add the following to your profile"
                 echo "export PYENV_LOCAL_SHIM=$HOME/.pyenv_local_shim"
-                setup_shim_dir()
+                echo
+                export PYENV_LOCAL_SHIM="$HOME/.pyenv_local_shim"
+                setup_shim_dir
                 ;;
 
             *)
-                echo "# replace '<PATH>' with your desired location path for your local shim directory"
+                echo "# Add the following to your profile and replace '<PATH>' with your desired location path for your local shim directory"
                 echo "export PYENV_LOCAL_SHIM=<PATH>"
+                echo
         esac
     fi
 }
@@ -100,23 +122,27 @@ shopt -s nullglob
 PARAM=$1
 
 case "$PARAM" in
-    baseinit)
-        init_multiuser()
+    setup)
+        init_multiuser
         ;;
 
     init)
-        user_init()
+        user_init
         ;;
 
     update)
-        update_multiuser()
+        update_multiuser
         STATUS="$?"
+        ;;
+
+    restore)
+        restore_files
         ;;
 
     *)
         echo "USAGE: pyenv multiuser [option]"
         echo "  OPTIONS:"
-        echo "      baseinit     : used initialize the multiuser setup. Should only need done once per install"
+        echo "      setup        : used initialize the multiuser setup. Should only need done once per install"
         echo "      init         : initialize the shim path at the individual user level"
         echo "      update       : perform an update of pyenv accounting for the multiuser setup"
         ;;

@@ -40,4 +40,4 @@ The `pyenv multiuser update` command is a bit of a wrapper around the *pyenv-upd
 
 ## Version History
 #### 20210512
-- 1.0.0 [tentative]
+- 0.1.0 [tentative]

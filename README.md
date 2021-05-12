@@ -23,11 +23,21 @@ An individual user can setup their personalized shims directory environment vari
 
 This is an optional interactive approach. Otherwise, the user can simple set the environment variable manually and create the directory if not already present.
 
+To ensure that the shims work correctly, your profile should look like this:
+
+```bash
+# Example Profile Setup
+export PYENV_LOCAL_SHIM="$HOME/.pyenv_local_shim"
+export PATH="$PYENV_LOCAL_SHIM:$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+```
+
 ### Update
-The `pyenv multiuser update` command is a bit of a wrapper around the *pyenv-update* command. Since this plugin makes changes to the base code of pyenv, itis required to restore the original versions of those files before performing updates. This will restore the unaltered files. Perform the update. Finally, re-setup the multiuser changes.
+The `pyenv multiuser update` command is a bit of a wrapper around the *pyenv-update* command. Since this plugin makes changes to the base code of pyenv, it is required to restore the original versions of those files before performing updates. This will restore the unaltered files, perform the update, and finally re-setup the multiuser changes.
 
     $ pyenv multiuser update
 
 ## Version History
 #### 20210512
-- v1.0 [tentative]
+- 1.0.0 [tentative]

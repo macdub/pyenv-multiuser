@@ -7,8 +7,6 @@ if [ -z "$PYENV_ROOT" ]; then
     PYENV_ROOT="${HOME}/.pyenv"
 fi
 
-ALTER_FILES=$(grep -lr '${PYENV_ROOT}/shims' $PYENV_ROOT)
-
 backup_files() {
     SUB="pyenv-multiuser"
     for filename in ${ALTER_FILES[@]}; do
@@ -62,6 +60,7 @@ update_multiuser() {
         return $STATUS
     fi
 
+    # rescan to find the files that need to be changed
     ALTER_FILES=$(grep -lr '${PYENV_ROOT}/shims' $PYENV_ROOT)
     echo "Performing file backup ..."
     backup_files
@@ -70,12 +69,23 @@ update_multiuser() {
     alter_files
 }
 
-init_multiuser() {
+setup_multiuser() {
+    if [ -e "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true" ]
+    then
+        return 1
+    fi
+
+    # scan for the files that need changed
+    ALTER_FILES=$(grep -lr '${PYENV_ROOT}/shims' $PYENV_ROOT)
     echo "Performing file backup ..."
     backup_files
 
     echo "Performing file alterations ..."
     alter_files
+
+    # setup a file to check for to prevent double setups
+    echo "true" > "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true"
+    return 0
 }
 
 setup_shim_dir() {
@@ -96,20 +106,24 @@ setup_shim_dir() {
 }
 
 user_init() {
+    SHIM_DIR=$1
+    if [ -x "$SHIM_DIR" ]; then
+        SHIM_DIR="$HOME/.pyenv_local_shim"
+    fi
 
     if [ -z "$PYENV_LOCAL_SHIM" ]; then
-        echo -n "PYENV_LOCAL_SHIM not set. Would you like to use the default setting ($HOME/.pyenv_local_shim)? [Y/n] "
+        echo -n "PYENV_LOCAL_SHIM not set. Would you like to use '$SHIM_DIR'? [Y/n] "
         read USE_DEFAULT
         USE_DEFAULT=${USE_DEFAULT:-y}
 
         case "$USE_DEFAULT" in
             y | Y)
                 echo "# Add the following to your profile"
-                echo "export PYENV_LOCAL_SHIM=$HOME/.pyenv_local_shim"
+                echo "export PYENV_LOCAL_SHIM=$SHIM_DIR"
                 echo
-                PYENV_LOCAL_SHIM="$HOME/.pyenv_local_shim"
+                PYENV_LOCAL_SHIM="$SHIM_DIR"
                 export PYENV_LOCAL_SHIM
-                setup_shim_dir
+                setup_shim_dir $SHIM_DIR
                 ;;
 
             *)
@@ -142,41 +156,56 @@ uninstall() {
     esac
 }
 
-STATUS=0
-shopt -s nullglob
-PARAM=$1
+main() {
+    shopt -s nullglob
+    CMD=$1
 
-case "$PARAM" in
-    setup)
-        init_multiuser
-        ;;
+    case "$CMD" in
+        setup)
+            RET=setup_multiuser
+            if [ $RET > 0 ]
+            then
+                echo "pyenv-multiuser already setup. This only needs performed once."
+            fi
+            ;;
 
-    init)
-        user_init
-        ;;
+        init)
+            user_init $2
+            ;;
 
-    update)
-        if [ ! -d "$(pyenv root)/plugins/pyenv-update" ]; then
-            echo "The pyenv-update plugin is not installed."
-            exit 0
-        fi
+        update)
+            if [ ! -d "$(pyenv root)/plugins/pyenv-update" ]; then
+                echo "The pyenv-update plugin is not installed."
+                exit 0
+            fi
 
-        update_multiuser
-        STATUS="$?"
-        ;;
+            STATUS=$(update_multiuser)
+            ;;
 
-    uninstall)
-        uninstall
-        ;;
+        uninstall)
+            uninstall
+            ;;
 
-    *)
-        echo "USAGE: pyenv multiuser [option]"
-        echo "  OPTIONS:"
-        echo "      setup        : used initialize the multiuser setup. Should only need done once per install"
-        echo "      init         : initialize the shim path at the individual user level"
-        echo "      update       : perform an update of pyenv accounting for the multiuser setup"
-        ;;
-esac
+        *)
+            echo "USAGE: pyenv multiuser [option]"
+            echo "  OPTIONS:"
+            echo "      setup        : used initialize the multiuser setup. Should only need done once per install"
+            echo "      init         : initialize the shim path at the individual user level"
+            echo "                     Can take in an optional directory path to use for the shims directory"
+            echo "      update       : perform an update of pyenv accounting for the multiuser setup"
+            echo "      uninstall    : uninstall the pyenv-multiuser plugin"
+            ;;
+    esac
+}
 
-shopt -u nullglob
-exit "$STATUS"
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]
+then
+    shopt -s nullglob
+    main "$1"
+    if [ $? -gt 0 ]
+    then
+        shopt -u nullglob
+        exit 1
+    fi
+    shopt -u nullglob
+fi

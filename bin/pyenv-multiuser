@@ -126,6 +126,22 @@ user_init() {
     echo '# eval "$(pyenv virtualenv-init -)"'
 }
 
+uninstall() {
+    echo -n "You are about to uninstall pyenv-multiuser. Are you sure you want to do this? [y/N] "
+    read YN
+    YN=${YN:-n}
+
+    case "$YN" in
+        y | Y)
+            echo "Uninstalling pyenv-multiuser ..."
+            restore_files
+
+            echo "Removing plugin ..."
+            rm -rf "$(pyenv root)/plugins/pyenv-multiuser"
+            ;;
+    esac
+}
+
 STATUS=0
 shopt -s nullglob
 PARAM=$1
@@ -147,6 +163,10 @@ case "$PARAM" in
 
         update_multiuser
         STATUS="$?"
+        ;;
+
+    uninstall)
+        uninstall
         ;;
 
     *)

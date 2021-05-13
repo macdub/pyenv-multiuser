@@ -38,9 +38,17 @@ The `pyenv multiuser update` command is a bit of a wrapper around the *pyenv-upd
 
     $ pyenv multiuser update
 
-## Version History
-#### 20210512
-- 0.1.1
-    - add check to update function to look for the *pyenv-update* plugin
+### Uninstall
+The `pyenv multiuser uninstall` command will uninstall the plugin from your pyenv install. It restores the normal pyenv files that it modified prior to uninstalling to ensure that your pyenv install will still function.
 
-- 0.1.0
+    $ pyenv multiuser uninstall
+
+## Version History
+#### v0.2.0
+- add uninstall command
+
+#### v0.1.1
+- add check to update function to look for the *pyenv-update* plugin
+
+#### v0.1.0
+- Initial version

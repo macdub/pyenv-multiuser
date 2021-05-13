@@ -135,6 +135,8 @@ uninstall() {
         y | Y)
             echo "Uninstalling pyenv-multiuser ..."
             restore_files
+
+            echo "Removing plugin ..."
             rm -rf "$(pyenv root)/plugins/pyenv-multiuser"
             ;;
     esac

@@ -161,10 +161,10 @@ main() {
 
     case "$CMD" in
         setup)
-            RET=setup_multiuser
+            RET=$(setup_multiuser)
             if [ $RET > 0 ]
             then
-                echo "pyenv-multiuser already setup. This only needs performed once."
+                echo "[$RET] pyenv-multiuser already setup. This only needs performed once."
             fi
             ;;
 

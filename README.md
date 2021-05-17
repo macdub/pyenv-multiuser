@@ -10,6 +10,13 @@ Installing pyenv-multiuser as a pyenv plugin will give access to the `pyenv mult
 
 After installed, you should run `pyenv multiuser setup` to setup the pyenv to look for the `PYENV_LOCAL_SHIM` environment variable. Any users that may want to use can run `pyenv multiuser init` to setup their local shim directory settings.
 
+## Uninstalling
+A command is provided within the *pyenv-multiuser* plugin to uninstall the plugin. This will restore the original files that were change in the pyenv install and then remove the plugin from the pyenv install.
+
+    $ pyenv multiuser uninstall
+
+This will ask for confirmation that uninstallation is desired before proceeding.
+
 ## Usage
 ### Initial Setup
 Initial setup is done via `pyenv multiuser setup`

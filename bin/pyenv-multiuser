@@ -175,6 +175,7 @@ case "$PARAM" in
         echo "      setup        : used initialize the multiuser setup. Should only need done once per install"
         echo "      init         : initialize the shim path at the individual user level"
         echo "      update       : perform an update of pyenv accounting for the multiuser setup"
+        echo "      uninstall    : perform an uninstall. restores backed up files and removes the plugin"
         ;;
 esac
 

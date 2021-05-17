@@ -27,8 +27,6 @@ echo "Installing pyenv-multiuser to test install"
 mkdir -p ./tmp/pyenv-test/plugins/pyenv-multiuser
 cp -r {backup,bin,test}/ ./tmp/pyenv-test/plugins/pyenv-multiuser
 
-exit 0
-
 echo "Peforming Docker build"
 docker build -t "pyenv-multiuser-test:$TAG" .
 

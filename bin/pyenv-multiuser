@@ -122,7 +122,6 @@ user_init() {
     echo "# Example Profile Setup"
     echo '# export PYENV_LOCAL_SHIM="$HOME/.pyenv_local_shim"'
     echo '# export PATH="$PYENV_LOCAL_SHIM:$HOME/.pyenv/bin:$PATH"'
-    echo '# eval "$(pyenv init -)"'
     echo '# eval "$(pyenv virtualenv-init -)"'
 }
 

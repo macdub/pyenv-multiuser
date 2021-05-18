@@ -9,6 +9,7 @@ jobs:
               with:
                   path: pyenv-multiuser
                   ref: testing
+                  submodules: true
 
             - name: Setup base pyenv
               uses: actions/checkout@v2

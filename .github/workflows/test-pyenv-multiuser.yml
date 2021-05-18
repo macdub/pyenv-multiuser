@@ -14,7 +14,7 @@ jobs:
               with:
                   repository: pyenv/pyenv
                   path: pyenv
-            - uses: actions/setup-npm@v1
+            - uses: actions/setup-npm@v2
             - run: npm install -g bats
             - name: Setup testing workspace
               run: |

@@ -1,5 +1,9 @@
 name: test-pyenv-multiuser
-on: [push]
+on:
+    push:
+        branches:
+            - main
+
 jobs:
     test-multiuser-setup:
         runs-on: ubuntu-latest
@@ -8,7 +12,6 @@ jobs:
               uses: actions/checkout@v2
               with:
                   path: pyenv-multiuser
-                  ref: testing
                   submodules: true
 
             - name: Setup base pyenv

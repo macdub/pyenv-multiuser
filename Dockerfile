@@ -22,6 +22,7 @@ RUN apt-get update -y \
         liblzma-dev \
         python-openssl \
         git \
+        bats \
     && rm -rf /var/lib/apt/lists/*
 
 ENV PYENV_BASE_ROOT "/pyenv"

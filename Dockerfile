@@ -30,5 +30,6 @@ ENV PYENV_LOCAL_SHIM "/root/.pyenv_local_shim"
 
 COPY ./tmp/pyenv /pyenv
 COPY ./tmp/pyenv-test /pyenv-test
+RUN mkdir -p /tmp/test_home
 
 RUN eval "$(pyenv init -)"

@@ -1,0 +1,39 @@
+name: test-pyenv-multiuser
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    test-multiuser-setup:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v2
+              with:
+                  path: pyenv-multiuser
+                  submodules: true
+
+            - name: Setup base pyenv
+              uses: actions/checkout@v2
+              with:
+                  repository: pyenv/pyenv
+                  path: pyenv
+
+            - name: Setup BATS testing framework
+              uses: mig4/setup-bats@v1.2.0
+
+            - name: Setup testing workspace
+              run: |
+                  cp -r $GITHUB_WORKSPACE/pyenv $GITHUB_WORKSPACE/pyenv-test
+                  export PYENV_ROOT="$GITHUB_WORKSPACE/pyenv-test"
+                  export PYENV_BASE="$GITHUB_WORKSPACE/pyenv"
+                  mkdir /tmp/test_home
+                  cp -r $GITHUB_WORKSPACE/pyenv-multiuser $PYENV_ROOT/plugins/
+
+            - name: execute pyenv-multiuser tests
+              run: |
+                  export PYENV_ROOT="$GITHUB_WORKSPACE/pyenv-test"
+                  export PYENV_BASE="$GITHUB_WORKSPACE/pyenv"
+                  echo "PYENV_ROOT: '$PYENV_ROOT' PYENV_BASE: '$PYENV_BASE'"
+                  bats --tap $PYENV_ROOT/plugins/pyenv-multiuser/test

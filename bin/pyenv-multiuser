@@ -7,10 +7,9 @@ if [ -z "$PYENV_ROOT" ]; then
     PYENV_ROOT="${HOME}/.pyenv"
 fi
 
-ALTER_FILES=$(grep -lr '${PYENV_ROOT}/shims' $PYENV_ROOT)
-
 backup_files() {
-    SUB="pyenv-multiuser"
+    SUB="plugins/pyenv-multiuser"
+    ALTER_FILES=$(grep -lr '${PYENV_ROOT}/shims' $PYENV_ROOT)
     for filename in ${ALTER_FILES[@]}; do
         if [[ "$filename" == *"$SUB"* ]]; then
             continue
@@ -28,7 +27,12 @@ restore_files() {
         restore=$(echo $filename | sed 's/__/\//g')
         echo "Restoring $filename -> $restore"
         cp "$MU/$filename" $restore
+        rm "$MU/$filename"
     done
+
+    if [ -e "$(pyenv root)/plugins/pyenv-multiuser/setup.true" ]; then
+        rm "$(pyenv root)/plugins/pyenv-multiuser/setup.true"
+    fi
 }
 
 alter_files() {
@@ -62,6 +66,7 @@ update_multiuser() {
         return $STATUS
     fi
 
+    # rescan to find the files that need to be changed
     ALTER_FILES=$(grep -lr '${PYENV_ROOT}/shims' $PYENV_ROOT)
     echo "Performing file backup ..."
     backup_files
@@ -70,46 +75,54 @@ update_multiuser() {
     alter_files
 }
 
-init_multiuser() {
+setup_multiuser() {
+    if [ -e "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true" ]
+    then
+        echo "pyenv-multiuser already setup. This only needs performed once."
+        return 1
+    fi
+
+    # scan for the files that need changed
+    ALTER_FILES=$(grep -lr '${PYENV_ROOT}/shims' $PYENV_ROOT)
     echo "Performing file backup ..."
     backup_files
 
     echo "Performing file alterations ..."
     alter_files
+
+    # setup a file to check for to prevent double setups
+    echo "true" > "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true"
+    return 0
 }
 
 setup_shim_dir() {
     if [ ! -d "$PYENV_LOCAL_SHIM" ]; then
-        echo -n "Directory '$PYENV_LOCAL_SHIM' does not exist. Would you like to create it now? [Y/n] "
-        read YN
-        YN=${YN:-y}
-
-        case "$YN" in
-            y | Y)
-                mkdir $PYENV_LOCAL_SHIM
-                ;;
-            *)
-                echo "You will need to create '$PYENV_LOCAL_SHIM' manually"
-                ;;
-        esac
+        echo -n "Directory '$PYENV_LOCAL_SHIM' does not exist. Creating ... "
+        mkdir $PYENV_LOCAL_SHIM
     fi
 }
 
 user_init() {
+    export SHIM_DIR="$1"
+    if [ -z "$SHIM_DIR" ]; then
+        export SHIM_DIR="$HOME/.pyenv_local_shim"
+    fi
 
     if [ -z "$PYENV_LOCAL_SHIM" ]; then
-        echo -n "PYENV_LOCAL_SHIM not set. Would you like to use the default setting ($HOME/.pyenv_local_shim)? [Y/n] "
+        echo -n "PYENV_LOCAL_SHIM not set. Would you like to use '$SHIM_DIR'? [Y/n] "
         read USE_DEFAULT
         USE_DEFAULT=${USE_DEFAULT:-y}
 
         case "$USE_DEFAULT" in
             y | Y)
                 echo "# Add the following to your profile"
-                echo "export PYENV_LOCAL_SHIM=$HOME/.pyenv_local_shim"
+                echo "export PYENV_LOCAL_SHIM=$SHIM_DIR"
                 echo
-                PYENV_LOCAL_SHIM="$HOME/.pyenv_local_shim"
-                export PYENV_LOCAL_SHIM
-                setup_shim_dir
+                export PYENV_LOCAL_SHIM="$SHIM_DIR"
+                if [ ! -d "$PYENV_LOCAL_SHIM" ]; then
+                    echo "Directory '$PYENV_LOCAL_SHIM' does not exist. Creating ... "
+                    mkdir -v $PYENV_LOCAL_SHIM
+                fi
                 ;;
 
             *)
@@ -141,42 +154,56 @@ uninstall() {
     esac
 }
 
-STATUS=0
-shopt -s nullglob
-PARAM=$1
+main() {
+    shopt -s nullglob
+    CMD=$1
 
-case "$PARAM" in
-    setup)
-        init_multiuser
-        ;;
+    case "$CMD" in
+        setup)
+            setup_multiuser
+            ;;
 
-    init)
-        user_init
-        ;;
+        init)
+            user_init $2
+            ;;
 
-    update)
-        if [ ! -d "$(pyenv root)/plugins/pyenv-update" ]; then
-            echo "The pyenv-update plugin is not installed."
-            exit 0
-        fi
+        update)
+            if [ ! -d "$(pyenv root)/plugins/pyenv-update" ]; then
+                echo "The pyenv-update plugin is not installed."
+                exit 0
+            fi
 
-        update_multiuser
-        STATUS="$?"
-        ;;
+            STATUS=$(update_multiuser)
+            ;;
 
-    uninstall)
-        uninstall
-        ;;
+        uninstall)
+            uninstall
+            ;;
 
-    *)
-        echo "USAGE: pyenv multiuser [option]"
-        echo "  OPTIONS:"
-        echo "      setup        : used initialize the multiuser setup. Should only need done once per install"
-        echo "      init         : initialize the shim path at the individual user level"
-        echo "      update       : perform an update of pyenv accounting for the multiuser setup"
-        echo "      uninstall    : perform an uninstall. restores backed up files and removes the plugin"
-        ;;
-esac
+        restore)
+            restore_files
+            ;;
 
-shopt -u nullglob
-exit "$STATUS"
+        *)
+            echo "USAGE: pyenv multiuser [option]"
+            echo "  OPTIONS:"
+            echo "      setup        : used initialize the multiuser setup. Should only need done once per install"
+            echo "      init         : initialize the shim path at the individual user level"
+            echo "                     Can take in an optional directory path to use for the shims directory"
+            echo "      update       : perform an update of pyenv accounting for the multiuser setup"
+            echo "      uninstall    : uninstall the pyenv-multiuser plugin"
+            ;;
+    esac
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]
+then
+    shopt -s nullglob
+    main "$@"
+    if [ $? -gt 0 ]
+    then
+        shopt -u nullglob
+        exit 1
+    fi
+    shopt -u nullglob
+fi

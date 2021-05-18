@@ -1,3 +1,4 @@
+[![test-pyenv-multiuser](https://github.com/macdub/pyenv-multiuser/actions/workflows/test-pyenv-multiuser.yml/badge.svg?event=status)](https://github.com/macdub/pyenv-multiuser/actions/workflows/test-pyenv-multiuser.yml)
 # pyenv-multiuser
 A pyenv plugin to enable a more friendly multi-user environment. This plugin will alter the code of pyenv where it looks for the shims directory. By default, the shims directory is setup under `$PYENV_ROOT/shims`, when multiple users are using the same pyenv instance there could be collisions with the changing of shims relative to each environment being used. At times the lock in this directory may fail to be unlocked and prevent others from making changes.
 

@@ -9,13 +9,19 @@ jobs:
               with:
                   path: pyenv-multiuser
                   ref: testing
+
             - name: Setup base pyenv
               uses: actions/checkout@v2
               with:
                   repository: pyenv/pyenv
                   path: pyenv
-            - uses: actions/setup-npm@v2
-            - run: npm install -g bats
+
+            - name: Setup Node.js environment
+              uses: actions/setup-node@v2.1.5
+
+            - name: Install bats
+              run: npm install -g bats
+
             - name: Setup testing workspace
               run: |
                   cp -r $GITHUB_WORKSPACE/pyenv $GITHUB_WORKSPACE/pyenv-test
@@ -23,6 +29,7 @@ jobs:
                   export PYENV_BASE="$GITHUB_WORKSPACE/pyenv"
                   mkdir /tmp/test_home
                   cp -r $GITHUB_WORKSPACE/pyenv-multiuser $PYENV_ROOT/plugins/
+
             - name: execute pyenv-multiuser tests
               run: |
                   cd $PYENV_ROOT/plugins/pyenv-multiuser

@@ -29,5 +29,7 @@ jobs:
 
             - name: execute pyenv-multiuser tests
               run: |
-                  echo "PYENV_ROOT: '$PYENV_ROOT'"
+                  export PYENV_ROOT="$GITHUB_WORKSPACE/pyenv-test"
+                  export PYENV_BASE="$GITHUB_WORKSPACE/pyenv"
+                  echo "PYENV_ROOT: '$PYENV_ROOT' PYENV_BASE: '$PYENV_BASE'"
                   bats --tap $PYENV_ROOT/plugins/pyenv-multiuser/test

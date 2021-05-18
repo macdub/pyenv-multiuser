@@ -3,6 +3,21 @@ unset PYENV_DIR
 
 # Will be testing on a docker image with two pyenv setups
 # CONTROL: /pyenv  TEST: /pyenv-test
+export PYENV_ROOT="/pyenv-test"
+export PYENV_BASE="/pyenv"
+PATH="$PYENV_ROOT/bin:$PATH"
+HOME="/tmp/test_home"
+
+teardown() {
+    run pyenv multiuser restore
+    if [ -e "$HOME/my_pyenv_shims" ]; then
+        rm -r "$HOME/my_pyenv_shims"
+    fi
+
+    if [ -e "$HOME/.pyenv_local_shim" ];then
+        rm -r "$HOME/.pyenv_local_shim"
+    fi
+}
 
 flunk() {
     {
@@ -11,7 +26,7 @@ flunk() {
         else
             echo "$@"
         fi
-    } | sed "s:${PYENV_TEST_DIR}:TEST_DIR:g" >&2
+    }
     return 1
 }
 

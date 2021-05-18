@@ -17,11 +17,13 @@ jobs:
             - uses: actions/setup-npm@v1
             - run: npm install -g bats
             - name: Setup testing workspace
-              run: cp -r $GITHUB_WORKSPACE/pyenv $GITHUB_WORKSPACE/pyenv-test
-              run: export PYENV_ROOT="$GITHUB_WORKSPACE/pyenv-test"
-              run: export PYENV_BASE="$GITHUB_WORKSPACE/pyenv"
-              run: mkdir /tmp/test_home
-              run: cp -r $GITHUB_WORKSPACE/pyenv-multiuser $PYENV_ROOT/plugins/
+              run: |
+                  cp -r $GITHUB_WORKSPACE/pyenv $GITHUB_WORKSPACE/pyenv-test
+                  export PYENV_ROOT="$GITHUB_WORKSPACE/pyenv-test"
+                  export PYENV_BASE="$GITHUB_WORKSPACE/pyenv"
+                  mkdir /tmp/test_home
+                  cp -r $GITHUB_WORKSPACE/pyenv-multiuser $PYENV_ROOT/plugins/
             - name: execute pyenv-multiuser tests
-              run: cd $PYENV_ROOT/plugins/pyenv-multiuser
-              run: bats --tap test
+              run: |
+                  cd $PYENV_ROOT/plugins/pyenv-multiuser
+                  bats --tap test

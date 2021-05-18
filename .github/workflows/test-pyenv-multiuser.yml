@@ -28,4 +28,6 @@ jobs:
                   cp -r $GITHUB_WORKSPACE/pyenv-multiuser $PYENV_ROOT/plugins/
 
             - name: execute pyenv-multiuser tests
-              run: bats --tap $PYENV_ROOT/plugins/pyenv-multiuser/test
+              run: |
+                  echo "PYENV_ROOT: '$PYENV_ROOT'"
+                  bats --tap $PYENV_ROOT/plugins/pyenv-multiuser/test

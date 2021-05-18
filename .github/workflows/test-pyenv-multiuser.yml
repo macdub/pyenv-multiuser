@@ -16,11 +16,8 @@ jobs:
                   repository: pyenv/pyenv
                   path: pyenv
 
-            - name: Setup Node.js environment
-              uses: actions/setup-node@v2.1.5
-
-            - name: Install bats
-              run: npm install -g bats
+            - name: Setup BATS testing framework
+                uses: mig4/setup-bats@v1.2.0
 
             - name: Setup testing workspace
               run: |

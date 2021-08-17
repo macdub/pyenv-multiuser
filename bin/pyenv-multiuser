@@ -136,6 +136,7 @@ user_init() {
     echo '# export PYENV_LOCAL_SHIM="$HOME/.pyenv_local_shim"'
     echo '# export PATH="$PYENV_LOCAL_SHIM:$HOME/.pyenv/bin:$PATH"'
     echo '# eval "$(pyenv virtualenv-init -)"'
+    echo '!! Refer to the pyenv setup instructions and modify accordingly !!'
 }
 
 uninstall() {

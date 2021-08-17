@@ -38,9 +38,7 @@ load helper
     while [ $itr -lt ${#ALT[@]} ]
     do
         echo "Checking BASE: ${SUM[$i]}"
-        assert [[ "${ALT[@]}" =~ "${SUM[$i]}" ]]
+        assert_success `[[ "${ALT[@]}" =~ "${SUM[$i]}" ]]`
         itr=$(( $itr + 2 ))
     done
-
-    [ 1 -eq 0 ]
 }

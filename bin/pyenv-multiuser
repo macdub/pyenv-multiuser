@@ -9,7 +9,7 @@ fi
 
 backup_files() {
     SUB="plugins/pyenv-multiuser"
-    ALTER_FILES=$(grep -lr '${PYENV_ROOT}/shims' $PYENV_ROOT)
+    ALTER_FILES=$(find $PYENV_BASE -type f -exec grep -Hl '${PYENV_ROOT}/shims' {} \;)
     for filename in ${ALTER_FILES[@]}; do
         if [[ "$filename" == *"$SUB"* ]]; then
             continue
@@ -83,7 +83,7 @@ setup_multiuser() {
     fi
 
     # scan for the files that need changed
-    ALTER_FILES=$(grep -lr '${PYENV_ROOT}/shims' $PYENV_ROOT)
+    ALTER_FILES=$(find $PYENV_BASE -type f -exec grep -Hl '${PYENV_ROOT}/shims' {} \;)
     echo "Performing file backup ..."
     backup_files
 

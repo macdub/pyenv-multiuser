@@ -28,10 +28,10 @@ load helper
     assert [ ${#SUM[@]} = ${#ALT[@]} ]
 
     echo '----- BASE FILES -----'
-    print '%s\n' "${SUM[@]}"
+    printf '%s\n' "${SUM[@]}"
 
     echo '\n----- BACKUPS -----'
-    print '%s\n' "${ALT[@]}"
+    printf '%s\n' "${ALT[@]}"
     echo
 
     itr=0

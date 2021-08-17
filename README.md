@@ -7,14 +7,14 @@ This plugin will solve this by having the base pyenv code look for a custom dire
 ## Installing as pyenv plugin
 Installing pyenv-multiuser as a pyenv plugin will give access to the `pyenv multiuser` command.
 
-    $ git clone https://github.com/macdub/pyenv-multiuser $(pyenv root)/plugins/pyenv-multiuser
+    git clone https://github.com/macdub/pyenv-multiuser $(pyenv root)/plugins/pyenv-multiuser
 
 After installed, you should run `pyenv multiuser setup` to setup the pyenv to look for the `PYENV_LOCAL_SHIM` environment variable. Any users that may want to use can run `pyenv multiuser init` to setup their local shim directory settings.
 
 ## Uninstalling
 A command is provided within the *pyenv-multiuser* plugin to uninstall the plugin. This will restore the original files that were change in the pyenv install and then remove the plugin from the pyenv install.
 
-    $ pyenv multiuser uninstall
+    pyenv multiuser uninstall
 
 This will ask for confirmation that uninstallation is desired before proceeding.
 
@@ -22,16 +22,16 @@ This will ask for confirmation that uninstallation is desired before proceeding.
 ### Initial Setup
 Initial setup is done via `pyenv multiuser setup`
 
-    $ pyenv multiuser setup
+    pyenv multiuser setup
 
 ### Individual User Setup
 An individual user can setup their personalized shims directory environment variable using `pyenv multiuser init`
 
-    $ pyenv multiuser init
+    pyenv multiuser init
 
 This is an optional interactive approach. Otherwise, the user can simple set the environment variable manually and create the directory if not already present.
 
-To ensure that the shims work correctly, your profile should look like this:
+To ensure that the shims work correctly, your profile should look similar to this:
 
 ```bash
 # Example Profile Setup
@@ -39,6 +39,8 @@ export PYENV_LOCAL_SHIM="$HOME/.pyenv_local_shim"
 export PATH="$PYENV_LOCAL_SHIM:$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv virtualenv-init -)"
 ```
+
+You should refer to the [PyEnv Installation](https://github.com/pyenv/pyenv#installation) and adjust to include the above.
 
 ### Update
 The `pyenv multiuser update` command is a bit of a wrapper around the *pyenv-update* command. Since this plugin makes changes to the base code of pyenv, it is required to restore the original versions of those files before performing updates. This will restore the unaltered files, perform the update, and finally re-setup the multiuser changes.
@@ -51,6 +53,15 @@ The `pyenv multiuser uninstall` command will uninstall the plugin from your pyen
     $ pyenv multiuser uninstall
 
 ## Version History
+#### v1.0.0
+- update setup information
+
+#### v0.3.0
+- bug fixes related to backup creation and restoration
+- CI pipeline setup
+- user init function creates shims directory
+- user init can take in custom directory as parameter `pyenv multiuser init <CUSTOM_PATH>`
+
 #### v0.2.0
 - add uninstall command
 

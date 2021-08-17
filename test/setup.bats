@@ -22,7 +22,7 @@ load helper
 
 @test "verify backup files" {
     run pyenv multiuser setup
-    SUM=($(grep -lr '${PYENV_ROOT}/shims' "$PYENV_BASE" | xargs md5sum))
+    SUM=($(find $PYENV_BASE -type f -exec grep -Hl '${PYENV_ROOT}/shims' {} \; | xargs md5sum))
     ALT=($(find "${PYENV_ROOT}/plugins/pyenv-multiuser/backup" -type f -not -path '*/\.*' | xargs md5sum))
 
     assert [ ${#SUM[@]} = ${#ALT[@]} ]
@@ -30,7 +30,7 @@ load helper
     echo '----- BASE FILES -----'
     printf '%s\n' "${SUM[@]}"
 
-    echo '\n----- BACKUPS -----'
+    echo '----- BACKUPS -----'
     printf '%s\n' "${ALT[@]}"
     echo
 

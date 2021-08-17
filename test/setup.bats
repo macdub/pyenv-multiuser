@@ -27,6 +27,13 @@ load helper
 
     assert [ ${#SUM[@]} = ${#ALT[@]} ]
 
+    echo '----- BASE FILES -----'
+    print '%s\n' "${SUM[@]}"
+
+    echo '\n----- BACKUPS -----'
+    print '%s\n' "${ALT[@]}"
+    echo
+
     itr=0
     while [ $itr -lt ${#ALT[@]} ]
     do
@@ -36,4 +43,6 @@ load helper
         assert [ $S = $A ]
         itr=$(( $itr + 2 ))
     done
+
+    [ 1 -eq 0 ]
 }

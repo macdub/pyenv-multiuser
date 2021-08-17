@@ -37,10 +37,8 @@ load helper
     itr=0
     while [ $itr -lt ${#ALT[@]} ]
     do
-        echo "Checking BASE: ${SUM[$i]} BACKUP: ${ALT[$i]}"
-        S=`echo ${SUM[$i]} | awk '{print $1}'`
-        A=`echo ${ALT[$i]} | awk '{print $1}'`
-        assert [ $S = $A ]
+        echo "Checking BASE: ${SUM[$i]}"
+        assert [[ "${ALT[@]}" =~ "${SUM[$i]}" ]]
         itr=$(( $itr + 2 ))
     done
 

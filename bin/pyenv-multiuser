@@ -7,6 +7,10 @@ if [ -z "$PYENV_ROOT" ]; then
     PYENV_ROOT="${HOME}/.pyenv"
 fi
 
+if [ -z "$PYENV_BASE" ]; then
+    PYENV_BASE=$PYENV_ROOT
+fi
+
 backup_files() {
     SUB="plugins/pyenv-multiuser"
     ALTER_FILES=$(find $PYENV_BASE -type f -exec grep -Hl '${PYENV_ROOT}/shims' {} \;)

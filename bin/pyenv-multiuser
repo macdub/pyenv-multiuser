@@ -77,6 +77,8 @@ update_multiuser() {
 
     echo "Performing file alterations ..."
     alter_files
+
+    echo "true" > "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true"
 }
 
 setup_multiuser() {

@@ -12,6 +12,11 @@ if [ -z "$PYENV_BASE" ]; then
 fi
 
 backup_files() {
+    # check to see that the backup directory exists and create it if it doesn't.
+    if [ ! -d "${PYENV_ROOT}/plugins/pyenv-multiuser/backup" ]; then
+        mkdir "${PYENV_ROOT}/plugins/pyenv-multiuser/backup"
+    fi
+
     SUB="plugins/pyenv-multiuser"
     ALTER_FILES=$(find $PYENV_BASE -type f -exec grep -Hl '${PYENV_ROOT}/shims' {} \;)
     for filename in ${ALTER_FILES[@]}; do
@@ -49,11 +54,13 @@ alter_files() {
         echo "Altering $filename"
         sed -i'' 's/${PYENV_ROOT}\/shims/${PYENV_LOCAL_SHIM}/g' $filename
     done
+
+    # setup a file to check for to prevent double setups
+    echo "true" > "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true"
 }
 
 clean_backups() {
-    BACKUP="$(pyenv root)/plugins/pyenv-multiuser/backup"
-    rm "${BACKUP}/"*
+    rm -r "$(pyenv root)/plugins/pyenv-multiuser/backup"
 }
 
 update_multiuser() {
@@ -77,13 +84,10 @@ update_multiuser() {
 
     echo "Performing file alterations ..."
     alter_files
-
-    echo "true" > "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true"
 }
 
 setup_multiuser() {
-    if [ -e "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true" ]
-    then
+    if [ -e "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true" ]; then
         echo "pyenv-multiuser already setup. This only needs performed once."
         return 1
     fi
@@ -96,8 +100,6 @@ setup_multiuser() {
     echo "Performing file alterations ..."
     alter_files
 
-    # setup a file to check for to prevent double setups
-    echo "true" > "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true"
     return 0
 }
 
@@ -180,7 +182,7 @@ main() {
                 exit 0
             fi
 
-            STATUS=$(update_multiuser)
+            update_multiuser
             ;;
 
         uninstall)
@@ -203,12 +205,10 @@ main() {
     esac
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]
-then
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     shopt -s nullglob
     main "$@"
-    if [ $? -gt 0 ]
-    then
+    if [ $? -gt 0 ]; then
         shopt -u nullglob
         exit 1
     fi

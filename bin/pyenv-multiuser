@@ -123,8 +123,16 @@ user_init() {
 
         case "$USE_DEFAULT" in
             y | Y)
-                echo "# Add the following to your profile"
-                echo "export PYENV_LOCAL_SHIM=$SHIM_DIR"
+                echo "Setting PYENV_LOCAL_SHIM in profile"
+                SHELL_TYPE=awk -F'/' '{print $NF}'
+                if [[ "$SHELL_TYPE" == "bash" ]]; then
+                    echo "\nexport PYENV_LOCAL_SHIM=\$HOME/$SHIM_DIR" >> "$HOME/.bashrc"
+                elif [[ "$SHELL_TYPE" == "zsh" ]]; then
+                    echo "\nexport PYENV_LOCAL_SHIM=\$HOME/$SHIM_DIR" >> "$HOME/.zshrc"
+                else
+                    echo "\nexport PYENV_LOCAL_SHIM=\$HOME/$SHIM_DIR" >> "$HOME/.profile"
+                fi
+
                 echo
                 export PYENV_LOCAL_SHIM="$SHIM_DIR"
                 if [ ! -d "$PYENV_LOCAL_SHIM" ]; then

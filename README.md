@@ -27,9 +27,13 @@ Initial setup is done via `pyenv multiuser setup`
 ### Individual User Setup
 An individual user can setup their personalized shims directory environment variable using `pyenv multiuser init`
 
-    pyenv multiuser init
+    pyenv multiuser init [PATH]
 
-This is an optional interactive approach. Otherwise, the user can simple set the environment variable manually and create the directory if not already present.
+This is command allows the user to setup the local shim directory. This will automatically add the appropriate export command to their shell rc file.
+
+- A **bash** shell will add the export to `$HOME/.bashrc`.
+- A **zsh** shell will add the export to `$HOME/.zshrc`.
+- All other shells will add the export to `$HOME/.profile`. It should be noted that there are shells that will ignore `.profile`, such as **csh** and **ksh** by default.
 
 To ensure that the shims work correctly, your profile should look similar to this:
 
@@ -53,6 +57,17 @@ The `pyenv multiuser uninstall` command will uninstall the plugin from your pyen
     $ pyenv multiuser uninstall
 
 ## Version History
+#### v1.0.1
+- hotfixes
+  * logic to replace the 'setup.true' marker file after an update is run
+  * add check for PYENV\_BASE environment variable being set and set to PYENV\_ROOT if it is not set
+  * remove backup directory from repository
+  * add logic to create backup directory during the `pyenv multiuser setup` command execution
+- general code clean up
+  * if-statement conventions
+- github
+  * create new workflow to run for all branches
+
 #### v1.0.0
 - update setup information
 

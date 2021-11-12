@@ -124,7 +124,7 @@ user_init() {
         case "$USE_DEFAULT" in
             y | Y)
                 echo "Setting PYENV_LOCAL_SHIM in profile"
-                SHELL_TYPE=awk -F'/' '{print $NF}'
+                SHELL_TYPE=$(echo $SHELL | awk -F'/' '{print $NF}')
                 if [[ "$SHELL_TYPE" == "bash" ]]; then
                     echo "\nexport PYENV_LOCAL_SHIM=$SHIM_DIR" >> "$HOME/.bashrc"
                 elif [[ "$SHELL_TYPE" == "zsh" ]]; then
@@ -135,10 +135,7 @@ user_init() {
 
                 echo
                 export PYENV_LOCAL_SHIM="$SHIM_DIR"
-                if [ ! -d "$PYENV_LOCAL_SHIM" ]; then
-                    echo "Directory '$PYENV_LOCAL_SHIM' does not exist. Creating ... "
-                    mkdir -v $PYENV_LOCAL_SHIM
-                fi
+                setup_shim_dir
                 ;;
 
             *)

@@ -56,11 +56,29 @@ alter_files() {
     done
 
     # setup a file to check for to prevent double setups
-    echo "true" > "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true"
+    date > "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true"
 }
 
 clean_backups() {
     rm -r "$(pyenv root)/plugins/pyenv-multiuser/backup"
+}
+
+status_multiuser() {
+    echo -n "setup.true file ... " && [ -e "$(pyenv root)/plugins/pyenv-muliuser/setup.true" ] && echo "Found" || echo "Not Found"
+    if [ -e "$(pyenv root)/plugins/pyenv-muliuser/setup.true" ]
+    then
+        echo -n "Setup on " && cat "$(pyenv root)/plugins/pyenv-muliuser/setup.true"
+    fi
+
+    echo "Have $(ls | wc -l) backed up files"
+    echo "Back-up Files"
+    
+    seen=0
+    for f in `find "${PYENV_ROOT}/plugins/pyenv-multiuser/backup" -type f`
+    do
+        seen=$((seen+1))
+        echo -e "    [$seen]: $f"
+    done
 }
 
 update_multiuser() {
@@ -198,6 +216,10 @@ main() {
             restore_files
             ;;
 
+        status)
+            status_multiuser
+            ;;
+
         *)
             echo "USAGE: pyenv multiuser [option]"
             echo "  OPTIONS:"
@@ -205,6 +227,7 @@ main() {
             echo "      init         : initialize the shim path at the individual user level"
             echo "                     Can take in an optional directory path to use for the shims directory"
             echo "      update       : perform an update of pyenv accounting for the multiuser setup"
+            echo "      status       : display the setup status of the plugin"
             echo "      uninstall    : uninstall the pyenv-multiuser plugin"
             ;;
     esac

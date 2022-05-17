@@ -56,7 +56,62 @@ The `pyenv multiuser uninstall` command will uninstall the plugin from your pyen
 
     $ pyenv multiuser uninstall
 
+## Commands
+### setup
+- Used to initialize the multiuser plugin. This only needs to be done once per pyenv install.
+
+
+    $ pyenv multiuser setup
+
+### init [PATH]
+- Initialize the shim path for the individual user
+- Can specify a custom path for the shim location. Defaults to $HOME/.pyenv\_local\_shim
+
+
+    $ pyenv multiuser init
+
+### status
+- Display the setup status of the plugin
+
+
+    $ pyenv multiuser status
+
+```
+setup.true file    ... Found
+setup date         ... Tue May 17 13:59:27 CDT 2022
+back up file count ... 11
+file list:
+    [1]: /home/user/.pyenv/plugins/pyenv-multiuser/backup/__home__user__.pyenv__libexec__pyenv-init
+    [2]: /home/user/.pyenv/plugins/pyenv-multiuser/backup/__home__user__.pyenv__libexec__pyenv-rehash
+    [3]: /home/user/.pyenv/plugins/pyenv-multiuser/backup/__home__user__.pyenv__libexec__pyenv-shims
+    [4]: /home/user/.pyenv/plugins/pyenv-multiuser/backup/__home__user__.pyenv__libexec__pyenv-which
+    [5]: /home/user/.pyenv/plugins/pyenv-multiuser/backup/__home__user__.pyenv__plugins__pyenv-virtualenv__bin__pyenv-virtualenv
+    [6]: /home/user/.pyenv/plugins/pyenv-multiuser/backup/__home__user__.pyenv__plugins__pyenv-which-ext__etc__pyenv.d__which__lookup_from_path.bash
+    [7]: /home/user/.pyenv/plugins/pyenv-multiuser/backup/__home__user__.pyenv__test__init.bats
+    [8]: /home/user/.pyenv/plugins/pyenv-multiuser/backup/__home__user__.pyenv__test__rehash.bats
+    [9]: /home/user/.pyenv/plugins/pyenv-multiuser/backup/__home__user__.pyenv__test__shims.bats
+    [10]: /home/user/.pyenv/plugins/pyenv-multiuser/backup/__home__user__.pyenv__test__test_helper.bash
+    [11]: /home/user/.pyenv/plugins/pyenv-multiuser/backup/__home__user__.pyenv__test__which.bats
+```
+
+### update
+- Restores the backed up files for the standard pyenv install and then updates using the pyenv-update plugin. After the update has completed, the multiuser changes are reapplied.
+
+
+    $ pyenv multiuser update
+
+### uninstall
+- Uninstall the multiuser plugin and restore the standard pyenv files.
+
+
+    $ pyenv multiuser uninstall
+
 ## Version History
+#### v1.0.3
+- Added `multiuser status` command to display list of backed up files and display if setup was run and the date it was setup
+- Removed the use of `$(pyenv root)` in favor of using the PYENV\_ROOT variable
+#### v1.0.2
+- fix issue where after `multiuser update` was run, the multiuser setup was not run to put the altered code back in place
 #### v1.0.1
 - hotfixes
   * logic to replace the 'setup.true' marker file after an update is run

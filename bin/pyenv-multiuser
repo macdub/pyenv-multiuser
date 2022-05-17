@@ -64,14 +64,15 @@ clean_backups() {
 }
 
 status_multiuser() {
-    echo -n "setup.true file ... " && [ -e "$(pyenv root)/plugins/pyenv-muliuser/setup.true" ] && echo "Found" || echo "Not Found"
-    if [ -e "$(pyenv root)/plugins/pyenv-muliuser/setup.true" ]
+    echo -n "setup.true file    ... "
+    [ -e "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true" ] && echo "Found" || echo "Not Found"
+    if [ -e "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true" ]
     then
-        echo -n "Setup on " && cat "$(pyenv root)/plugins/pyenv-muliuser/setup.true"
+        echo -n "setup date         ... " && cat "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true"
     fi
 
-    echo "Have $(ls | wc -l) backed up files"
-    echo "Back-up Files"
+    echo -n "back up file count ... " && ls "${PYENV_ROOT}/plugins/pyenv-multiuser/backup" | wc -l
+    echo "file list:"
     
     seen=0
     for f in `find "${PYENV_ROOT}/plugins/pyenv-multiuser/backup" -type f`

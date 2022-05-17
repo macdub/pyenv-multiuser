@@ -31,16 +31,16 @@ backup_files() {
 }
 
 restore_files() {
-    MU="$(pyenv root)/plugins/pyenv-multiuser/backup"
-    for filename in $(ls "$(pyenv root)/plugins/pyenv-multiuser/backup"); do
+    MU="${PYENV_ROOT}/plugins/pyenv-multiuser/backup"
+    for filename in $(ls "${PYENV_ROOT}/plugins/pyenv-multiuser/backup"); do
         restore=$(echo $filename | sed 's/__/\//g')
         echo "Restoring $filename -> $restore"
         cp "$MU/$filename" $restore
         rm "$MU/$filename"
     done
 
-    if [ -e "$(pyenv root)/plugins/pyenv-multiuser/setup.true" ]; then
-        rm "$(pyenv root)/plugins/pyenv-multiuser/setup.true"
+    if [ -e "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true" ]; then
+        rm "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true"
     fi
 }
 
@@ -60,7 +60,7 @@ alter_files() {
 }
 
 clean_backups() {
-    rm -r "$(pyenv root)/plugins/pyenv-multiuser/backup"
+    rm -r "${PYENV_ROOT}/plugins/pyenv-multiuser/backup"
 }
 
 status_multiuser() {
@@ -182,7 +182,7 @@ uninstall() {
             restore_files
 
             echo "Removing plugin ..."
-            rm -rf "$(pyenv root)/plugins/pyenv-multiuser"
+            rm -rf "${PYENV_ROOT}/plugins/pyenv-multiuser"
             ;;
     esac
 }
@@ -201,7 +201,7 @@ main() {
             ;;
 
         update)
-            if [ ! -d "$(pyenv root)/plugins/pyenv-update" ]; then
+            if [ ! -d "${PYENV_ROOT}/plugins/pyenv-update" ]; then
                 echo "The pyenv-update plugin is not installed."
                 exit 0
             fi

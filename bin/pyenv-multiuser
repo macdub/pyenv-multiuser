@@ -31,16 +31,16 @@ backup_files() {
 }
 
 restore_files() {
-    MU="$(pyenv root)/plugins/pyenv-multiuser/backup"
-    for filename in $(ls "$(pyenv root)/plugins/pyenv-multiuser/backup"); do
+    MU="${PYENV_ROOT}/plugins/pyenv-multiuser/backup"
+    for filename in $(ls "${PYENV_ROOT}/plugins/pyenv-multiuser/backup"); do
         restore=$(echo $filename | sed 's/__/\//g')
         echo "Restoring $filename -> $restore"
         cp "$MU/$filename" $restore
         rm "$MU/$filename"
     done
 
-    if [ -e "$(pyenv root)/plugins/pyenv-multiuser/setup.true" ]; then
-        rm "$(pyenv root)/plugins/pyenv-multiuser/setup.true"
+    if [ -e "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true" ]; then
+        rm "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true"
     fi
 }
 
@@ -56,11 +56,30 @@ alter_files() {
     done
 
     # setup a file to check for to prevent double setups
-    echo "true" > "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true"
+    date > "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true"
 }
 
 clean_backups() {
-    rm -r "$(pyenv root)/plugins/pyenv-multiuser/backup"
+    rm -r "${PYENV_ROOT}/plugins/pyenv-multiuser/backup"
+}
+
+status_multiuser() {
+    echo -n "setup.true file    ... "
+    [ -e "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true" ] && echo "Found" || echo "Not Found"
+    if [ -e "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true" ]
+    then
+        echo -n "setup date         ... " && cat "${PYENV_ROOT}/plugins/pyenv-multiuser/setup.true"
+    fi
+
+    echo -n "back up file count ... " && ls "${PYENV_ROOT}/plugins/pyenv-multiuser/backup" | wc -l
+    echo "file list:"
+    
+    seen=0
+    for f in `find "${PYENV_ROOT}/plugins/pyenv-multiuser/backup" -type f`
+    do
+        seen=$((seen+1))
+        echo -e "    [$seen]: $f"
+    done
 }
 
 update_multiuser() {
@@ -163,7 +182,7 @@ uninstall() {
             restore_files
 
             echo "Removing plugin ..."
-            rm -rf "$(pyenv root)/plugins/pyenv-multiuser"
+            rm -rf "${PYENV_ROOT}/plugins/pyenv-multiuser"
             ;;
     esac
 }
@@ -182,7 +201,7 @@ main() {
             ;;
 
         update)
-            if [ ! -d "$(pyenv root)/plugins/pyenv-update" ]; then
+            if [ ! -d "${PYENV_ROOT}/plugins/pyenv-update" ]; then
                 echo "The pyenv-update plugin is not installed."
                 exit 0
             fi
@@ -198,6 +217,10 @@ main() {
             restore_files
             ;;
 
+        status)
+            status_multiuser
+            ;;
+
         *)
             echo "USAGE: pyenv multiuser [option]"
             echo "  OPTIONS:"
@@ -205,6 +228,7 @@ main() {
             echo "      init         : initialize the shim path at the individual user level"
             echo "                     Can take in an optional directory path to use for the shims directory"
             echo "      update       : perform an update of pyenv accounting for the multiuser setup"
+            echo "      status       : display the setup status of the plugin"
             echo "      uninstall    : uninstall the pyenv-multiuser plugin"
             ;;
     esac

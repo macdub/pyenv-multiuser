@@ -8,7 +8,7 @@ if [ -z "$PYENV_ROOT" ]; then
 fi
 
 if [ -z "$PYENV_BASE" ]; then
-    PYENV_BASE=$PYENV_ROOT
+    PYENV_BASE="${PYENV_ROOT}/"
 fi
 
 backup_files() {

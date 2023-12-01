@@ -10,7 +10,7 @@ load helper
 }
 
 @test "check that the setup created file backups" {
-    SUMS=($(grep -lr --exclude-dir=.git* --exclude=.git* --exclude-dir=test --exclude-dir=man --exclude=*.md '\/shims' "${PYENV_ROOT}"))
+    SUMS=($(grep -lr --exclude-dir=.git* --exclude-dir=test --exclude-dir=man --exclude=.git* --exclude=*.md '\/shims' "${PYENV_ROOT}"))
     run pyenv multiuser setup
 
     echo "BACKUP FILES: " $(ls "${PYENV_ROOT}/plugins/pyenv-multiuser/backup")
@@ -21,7 +21,7 @@ load helper
 }
 
 @test "check all shim locations replaced" {
-    EXPECTED=($(grep -rl --exclude-dir=.git* --exclude=.git* --exclude-dir=test --exclude-dir=man --exclude=*.md '\/shims' "${PYENV_ROOT}" | wc -l))
+    EXPECTED=($(grep -rl --exclude-dir=.git* --exclude-dir=test --exclude-dir=man --exclude=.git* --exclude=*.md '\/shims' "${PYENV_ROOT}" | wc -l))
     printf 'Expect to make %d line changes\n' "${EXPECTED}"
     echo -e "output =\n${output}"
 
@@ -31,7 +31,7 @@ load helper
     run pyenv multiuser setup
 
     echo "Checking remaining count"
-    FOUND=($(grep -rl --exclude-dir=.git* --exclude=.git* --exclude-dir=test --exclude-dir=man --exclude=*.md '\/shims' "${PYENV_ROOT}" | wc -l))
+    FOUND=($(grep -rl --exclude-dir=.git* --exclude-dir=test --exclude-dir=man --exclude=.git* --exclude=*.md '\/shims' "${PYENV_ROOT}" | wc -l))
     echo -e "output =\n${output}"
 
     assert_equal "0" "${FOUND}"
@@ -39,7 +39,7 @@ load helper
 
 @test "verify backup files" {
     run pyenv multiuser setup
-    SUM=($(grep -rl --exclude-dir=.git* --exclude=.git* --exclude-dir=test --exclude-dir=man --exclude=*.md '\/shims' "${PYENV_ROOT}" | xargs md5sum))
+    SUM=($(grep -rl --exclude-dir=.git* --exclude-dir=test --exclude-dir=man --exclude=.git* --exclude=*.md '\/shims' "${PYENV_ROOT}" | xargs md5sum))
     ALT=($(find "${PYENV_ROOT}/plugins/pyenv-multiuser/backup" -type f -not -path '*/\.*' | xargs md5sum))
 
     assert_equal ${#SUM[@]} ${#ALT[@]}

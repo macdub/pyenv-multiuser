@@ -10,7 +10,7 @@ load helper
 }
 
 @test "check that the setup created file backups" {
-    SUMS=($(grep -lr '\/shims' "$PYENV_BASE"))
+    SUMS=($(grep -lr '\/shims' "${PYENV_BASE}/libexec"))
     run pyenv multiuser setup
 
     echo "BACKUP FILES: " $(ls "${PYENV_ROOT}/plugins/pyenv-multiuser/backup")
@@ -37,10 +37,10 @@ load helper
 
 @test "verify backup files" {
     run pyenv multiuser setup
-    SUM=($(find $PYENV_BASE -type f -exec grep -Hl '${PYENV_ROOT}/shims' {} \; | xargs md5sum))
+    SUM=($(find "${PYENV_BASE}/libexec" -type f -exec grep -Hl '/shims' {} \; | xargs md5sum))
     ALT=($(find "${PYENV_ROOT}/plugins/pyenv-multiuser/backup" -type f -not -path '*/\.*' | xargs md5sum))
 
-    assert [ ${#SUM[@]} = ${#ALT[@]} ]
+    assert_equal ${#SUM[@]} ${#ALT[@]}
 
     echo '----- BASE FILES -----'
     printf '%s\n' "${SUM[@]}"

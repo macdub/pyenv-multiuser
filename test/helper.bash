@@ -47,7 +47,7 @@ assert_failure() {
 }
 
 assert_equal() {
-    if [ "$1" != "$2" ]; then
+    if [ "$1" -ne "$2" ]; then
         {
             echo "expected: $1"
             echo "actual: $2"

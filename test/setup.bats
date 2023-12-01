@@ -10,7 +10,7 @@ load helper
 }
 
 @test "check that the setup created file backups" {
-    SUMS=($(grep -lr '${PYENV_ROOT}/shims' "$PYENV_BASE"))
+    SUMS=($(grep -lr '\/shims' "$PYENV_BASE"))
     run pyenv multiuser setup
 
     echo "BACKUP FILES: " $(ls "${PYENV_ROOT}/plugins/pyenv-multiuser/backup")
@@ -24,7 +24,7 @@ load helper
     EXPECTED=($(grep -r '\/shims' "${PYENV_ROOT}/libexec" | wc -l))
     printf 'Expect to make %d line changes\n' "${EXPECTED}"
 
-    assert [ "${EXPECTED}" > "0" ]
+    assert [ "${EXPECTED}" -gt 0 ]
 
     echo "Running setup"
     run pyenv multiuser setup
@@ -32,7 +32,7 @@ load helper
     echo "Checking remaining count"
     FOUND=($(grep -r '\/shims' "${PYENV_ROOT}/libexec" | wc -l))
 
-    assert_equal "${FOUND}" "0"
+    assert_equal "0" "${FOUND}"
 }
 
 @test "verify backup files" {

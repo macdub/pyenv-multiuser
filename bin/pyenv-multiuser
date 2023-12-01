@@ -52,7 +52,7 @@ alter_files() {
         fi
 
         echo "Altering $filename"
-        sed -i'' 's/${PYENV_ROOT}\/shims/${PYENV_LOCAL_SHIM}/g' $filename
+        sed -i'' 's/${PYENV_ROOT}"\?'\''\?\/shims"/${PYENV_LOCAL_SHIM}"/g' $filename
     done
 
     # setup a file to check for to prevent double setups

@@ -20,6 +20,18 @@ load helper
     assert [ "${#SUMS[@]}" = "${BACK_CNT}" ]
 }
 
+@test "check all shim locations replaced" {
+    EXPECTED=($(grep -r '\/shims' "${PYENV_ROOT}/libexec" | wc -l))
+    printf 'Expect to make %d line changes\n' "${EXPECTED}"
+
+    assert [ "${EXPECTED}" > "0" ]
+
+    run pyenv multiuser setup
+    FOUND=($(grep -r '\/shims' "${PYENV_ROOT}/libexec"))
+
+    assert_equal "${FOUND}" "0"
+}
+
 @test "verify backup files" {
     run pyenv multiuser setup
     SUM=($(find $PYENV_BASE -type f -exec grep -Hl '${PYENV_ROOT}/shims' {} \; | xargs md5sum))

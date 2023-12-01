@@ -10,7 +10,7 @@ load helper
 }
 
 @test "check that the setup created file backups" {
-    SUMS=($(grep -lr --exclude-dir=.git* --exclude=.git* --exclude-dir=test --exclude-dir=man --exclude=*.md '\/shims' "${PYENV_BASE}"))
+    SUMS=($(grep -lr --exclude-dir=.git* --exclude=.git* --exclude-dir=test --exclude-dir=man --exclude=*.md '\/shims' "${PYENV_ROOT}"))
     run pyenv multiuser setup
 
     echo "BACKUP FILES: " $(ls "${PYENV_ROOT}/plugins/pyenv-multiuser/backup")

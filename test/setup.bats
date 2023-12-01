@@ -26,7 +26,10 @@ load helper
 
     assert [ "${EXPECTED}" > "0" ]
 
+    echo "Running setup"
     run pyenv multiuser setup
+
+    echo "Checking remaining count"
     FOUND=($(grep -r '\/shims' "${PYENV_ROOT}/libexec" | wc -l))
 
     assert_equal "${FOUND}" "0"

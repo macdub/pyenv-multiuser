@@ -18,7 +18,7 @@ backup_files() {
     fi
 
     SUB="plugins/pyenv-multiuser"
-    ALTER_FILES=$(find "${PYENV_BASE}/libexec" -type f -exec grep -Hl '/shims' {} \;)
+    ALTER_FILES=$(grep -lr --exclude-dir=.git* --exclude=.git* --exclude-dir=test --exclude-dir=man --exclude=*.md '/shims' $PYENV_BASE)
     for filename in ${ALTER_FILES[@]}; do
         if [[ "$filename" == *"$SUB"* ]]; then
             continue
@@ -62,7 +62,7 @@ alter_files() {
         fi
 
         echo "Altering $filename"
-        sed -i'' 's/${PYENV_ROOT}"\?'\''\?\/shims"/${PYENV_LOCAL_SHIM}"/g' $filename
+        sed -i'' 's/${PYENV_ROOT}"\?'\''\?\/shims\/\?/${PYENV_LOCAL_SHIM}/g' $filename
     done
 
     # setup a file to check for to prevent double setups
@@ -107,7 +107,7 @@ update_multiuser() {
     fi
 
     # rescan to find the files that need to be changed
-    ALTER_FILES=$(grep -lr '/shims' $PYENV_ROOT)
+    ALTER_FILES=$(grep -lr --exclude-dir=.git* --exclude=.git* --exclude-dir=test --exclude-dir=man --exclude=*.md '/shims' $PYENV_ROOT)
     echo "Performing file backup ..."
     backup_files
 
@@ -122,7 +122,7 @@ setup_multiuser() {
     fi
 
     # scan for the files that need changed
-    ALTER_FILES=$(find "${PYENV_BASE}/libexec" -type f -exec grep -Hl '/shims' {} \;)
+    ALTER_FILES=$(grep -lr --exclude-dir=.git* --exclude=.git* --exclude-dir=test --exclude-dir=man --exclude=*.md '/shims' $PYENV_ROOT)
     echo "Performing file backup ..."
     backup_files
 

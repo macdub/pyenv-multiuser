@@ -32,6 +32,7 @@ load helper
     run pyenv multiuser setup
 
     echo "Checking remaining count"
+    findfiles "-H"
     FOUND=$(findfiles "-H" | wc -l)
 
     assert_equal "0" "${FOUND}"

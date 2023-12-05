@@ -10,7 +10,7 @@ load helper
 }
 
 @test "check that the setup created file backups" {
-    FILES=($(findfiles))
+    FILES=($(findfiles "-Hl"))
     COUNT="${#FILES[@]}"
     run pyenv multiuser setup
 
@@ -23,21 +23,18 @@ load helper
 }
 
 @test "check all shim locations replaced" {
-    EXPECTED=($(findfiles))
-    echo "EXPECTED: " ${EXPECTED[@]}
+    EXPECTED=$(findfiles "-H" | wc -l)
+    echo "Expect to make ${EXPECTED} line changes"
 
-    printf 'Expect to make %d line changes\n' "${#EXPECTED[@]}"
-
-    assert [ "${#EXPECTED[@]}" -gt 0 ]
+    assert [ "${EXPECTED}" -gt 0 ]
 
     echo "Running setup"
     run pyenv multiuser setup
 
-    echo "Checking remaining count - ${PYENV_ROOT}"
-    FOUND=($(findfiles))
-    echo "FOUND: " ${FOUND[@]}
+    echo "Checking remaining count"
+    FOUND=$(findfiles "-H" | wc -l)
 
-    assert_equal "0" "${#FOUND[@]}"
+    assert_equal "0" "${FOUND}"
 }
 
 @test "verify backup files" {

@@ -33,6 +33,7 @@ load helper
 
     echo "Checking status"
     run pyenv multiuser status
+    echo $output
 
     echo "Checking remaining count"
     findfiles "-H"

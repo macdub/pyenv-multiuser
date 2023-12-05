@@ -107,7 +107,7 @@ update_multiuser() {
     fi
 
     # rescan to find the files that need to be changed
-    ALTER_FILES=$(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" -prune -exec grep -Hl '/shims' {} \;)
+    ALTER_FILES=$(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" ! -path "$PYENV_ROOT/plugins/pyenv-multiuser" -prune -exec grep -Hl '/shims' {} \;)
     echo "Performing file backup ..."
     backup_files
 
@@ -122,7 +122,7 @@ setup_multiuser() {
     fi
 
     # scan for the files that need changed
-    ALTER_FILES=$(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" -prune -exec grep -Hl '/shims' {} \;)
+    ALTER_FILES=$(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" ! -path "$PYENV_ROOT/plugins/pyenv-multiuser" -prune -exec grep -Hl '/shims' {} \;)
     echo "Performing file backup ..."
     backup_files
 

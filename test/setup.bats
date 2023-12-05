@@ -24,8 +24,8 @@ load helper
 
 @test "check all shim locations replaced" {
     EXPECTED=($(findfiles))
+    echo "EXPECTED: " ${EXPECTED[@]}
 
-    echo "PYENV_ROOT: ${PYENV_ROOT}"
     printf 'Expect to make %d line changes\n' "${#EXPECTED[@]}"
 
     assert [ "${#EXPECTED[@]}" -gt 0 ]
@@ -35,6 +35,7 @@ load helper
 
     echo "Checking remaining count - ${PYENV_ROOT}"
     FOUND=($(findfiles))
+    echo "FOUND: " ${FOUND[@]}
 
     assert_equal "0" "${#FOUND[@]}"
 }

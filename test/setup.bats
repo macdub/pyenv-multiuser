@@ -31,7 +31,7 @@ load helper
     echo "Running setup"
     run pyenv multiuser setup
 
-    echo "Checking remaining count"
+    echo "Checking remaining count - ${PYENV_ROOT}"
     FOUND=($(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" ! -path "$PYENV_ROOT/plugins/pyenv-multiuser/*" -prune -exec grep -Hl '/shims' {} \; | wc -l))
 
     assert_equal "0" "${FOUND}"

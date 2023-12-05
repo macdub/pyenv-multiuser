@@ -30,6 +30,7 @@ load helper
 
     echo "Running setup"
     run pyenv multiuser setup
+    echo $output
 
     echo "Checking status"
     run pyenv multiuser status

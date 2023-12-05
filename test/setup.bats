@@ -10,20 +10,19 @@ load helper
 }
 
 @test "check that the setup created file backups" {
-    SUMS=($(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" -prune -exec grep -Hl '/shims' {} \; | wc -l))
+    SUMS=($(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" ! -path "$PYENV_ROOT/plugins/pyenv-multiuser/*" -prune -exec grep -Hl '/shims' {} \; | wc -l))
     run pyenv multiuser setup
 
     echo "BACKUP FILES: " $(ls "${PYENV_ROOT}/plugins/pyenv-multiuser/backup")
     BACK_CNT=$(ls "${PYENV_ROOT}/plugins/pyenv-multiuser/backup" | wc -l)
     
-    echo "SUMS: ${#SUMS[@]} BACK COUNT: ${BACK_CNT}"
-    assert [ "${#SUMS[@]}" = "${BACK_CNT}" ]
+    echo "SUMS: ${SUMS} BACK COUNT: ${BACK_CNT}"
+    assert [ "${SUMS}" = "${BACK_CNT}" ]
 }
 
 @test "check all shim locations replaced" {
-    EXPECTED=($(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" -prune -exec grep -Hl '/shims' {} \; | wc -l))
+    EXPECTED=($(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" ! -path "$PYENV_ROOT/plugins/pyenv-multiuser/*" -prune -exec grep -Hl '/shims' {} \; | wc -l))
     printf 'Expect to make %d line changes\n' "${EXPECTED}"
-    echo -e "output =\n${output}"
 
     assert [ "${EXPECTED}" -gt 0 ]
 
@@ -31,15 +30,14 @@ load helper
     run pyenv multiuser setup
 
     echo "Checking remaining count"
-    FOUND=($(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" -prune -exec grep -Hl '/shims' {} \; | wc -l))
-    echo -e "output =\n${output}"
+    FOUND=($(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" ! -path "$PYENV_ROOT/plugins/pyenv-multiuser/*" -prune -exec grep -Hl '/shims' {} \; | wc -l))
 
     assert_equal "0" "${FOUND}"
 }
 
 @test "verify backup files" {
     run pyenv multiuser setup
-    SUM=($(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" -prune -exec grep -Hl '/shims' {} \; | xargs md5sum))
+    SUM=($(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" ! -path "$PYENV_ROOT/plugins/pyenv-multiuser/*" -prune -exec grep -Hl '/shims' {} \; | xargs md5sum))
     ALT=($(find "${PYENV_ROOT}/plugins/pyenv-multiuser/backup" -type f -not -path '*/\.*' | xargs md5sum))
 
     assert_equal ${#SUM[@]} ${#ALT[@]}

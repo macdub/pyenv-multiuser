@@ -28,7 +28,7 @@ load helper
     echo "PYENV_ROOT: ${PYENV_ROOT}"
     printf 'Expect to make %d line changes\n' "${#EXPECTED[@]}"
 
-    assert [ "${EXPECTED}" -gt 0 ]
+    assert [ "${#EXPECTED[@]}" -gt 0 ]
 
     echo "Running setup"
     run pyenv multiuser setup

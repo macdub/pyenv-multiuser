@@ -31,6 +31,9 @@ load helper
     echo "Running setup"
     run pyenv multiuser setup
 
+    echo "Checking status"
+    run pyenv multiuser status
+
     echo "Checking remaining count"
     findfiles "-H"
     FOUND=$(findfiles "-H" | wc -l)

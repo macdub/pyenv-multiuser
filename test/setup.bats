@@ -22,6 +22,8 @@ load helper
 
 @test "check all shim locations replaced" {
     EXPECTED=($(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" ! -path "$PYENV_ROOT/plugins/pyenv-multiuser/*" -prune -exec grep -Hl '/shims' {} \; | wc -l))
+
+    echo "PYENV_ROOT: ${PYENV_ROOT}"
     printf 'Expect to make %d line changes\n' "${EXPECTED}"
 
     assert [ "${EXPECTED}" -gt 0 ]

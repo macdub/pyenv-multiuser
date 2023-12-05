@@ -86,5 +86,7 @@ assert() {
 }
 
 findfiles() {
-    find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "${PYENV_ROOT}/.git/*" ! -path "${PYENV_ROOT}/.github/*" ! -path "${PYENV_ROOT}/test/*" ! -path "${PYENV_ROOT}/man/*" ! -path "${PYENV_ROOT}/plugins/pyenv-multiuser/*" -prune -exec grep -Hl '/shims' {} \;
+    grep_opts=$1
+    
+    find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "${PYENV_ROOT}/.git/*" ! -path "${PYENV_ROOT}/.github/*" ! -path "${PYENV_ROOT}/test/*" ! -path "${PYENV_ROOT}/man/*" ! -path "${PYENV_ROOT}/plugins/pyenv-multiuser/*" -prune -exec grep $grep_opts '/shims' {} \;
 }

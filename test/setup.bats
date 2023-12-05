@@ -39,7 +39,7 @@ load helper
 
 @test "verify backup files" {
     run pyenv multiuser setup
-    SUM=($(findfiles | xargs md5sum))
+    SUM=($(findfiles "-Hl" | xargs md5sum))
     ALT=($(find "${PYENV_ROOT}/plugins/pyenv-multiuser/backup" -type f -not -path '*/\.*' | xargs md5sum))
 
     assert_equal ${#SUM[@]} ${#ALT[@]}

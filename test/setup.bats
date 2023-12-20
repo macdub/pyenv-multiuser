@@ -10,22 +10,45 @@ load helper
 }
 
 @test "check that the setup created file backups" {
-    SUMS=($(grep -lr '${PYENV_ROOT}/shims' "$PYENV_BASE"))
+    FILES=($(findfiles "-Hl"))
+    COUNT="${#FILES[@]}"
     run pyenv multiuser setup
 
+    echo "FOUND FILES: " ${FILES[@]}
     echo "BACKUP FILES: " $(ls "${PYENV_ROOT}/plugins/pyenv-multiuser/backup")
     BACK_CNT=$(ls "${PYENV_ROOT}/plugins/pyenv-multiuser/backup" | wc -l)
     
-    echo "SUMS: ${#SUMS[@]} BACK COUNT: ${BACK_CNT}"
-    assert [ "${#SUMS[@]}" = "${BACK_CNT}" ]
+    echo "COUNT: ${COUNT} BACK COUNT: ${BACK_CNT}"
+    assert [ "${COUNT}" = "${BACK_CNT}" ]
 }
+
+#@test "check all shim locations replaced" {
+#    EXPECTED=$(findfiles "-H" | wc -l)
+#    echo "Expect to make ${EXPECTED} line changes"
+#
+#    assert [ "${EXPECTED}" -gt 0 ]
+#
+#    echo "Running setup"
+#    run pyenv multiuser setup
+#    echo $output
+#
+#    echo "Checking status"
+#    run pyenv multiuser status
+#    echo $output
+#
+#    echo "Checking remaining count"
+#    findfiles "-H"
+#    FOUND=$(findfiles "-H" | wc -l)
+#
+#    assert_equal "0" "${FOUND}"
+#}
 
 @test "verify backup files" {
     run pyenv multiuser setup
-    SUM=($(find $PYENV_BASE -type f -exec grep -Hl '${PYENV_ROOT}/shims' {} \; | xargs md5sum))
+    SUM=($(findfiles "-Hl" | xargs md5sum))
     ALT=($(find "${PYENV_ROOT}/plugins/pyenv-multiuser/backup" -type f -not -path '*/\.*' | xargs md5sum))
 
-    assert [ ${#SUM[@]} = ${#ALT[@]} ]
+    assert_equal ${#SUM[@]} ${#ALT[@]}
 
     echo '----- BASE FILES -----'
     printf '%s\n' "${SUM[@]}"

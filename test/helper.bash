@@ -47,10 +47,10 @@ assert_failure() {
 }
 
 assert_equal() {
-    if [ "$1" != "$2" ]; then
+    if [ "$1" -ne "$2" ]; then
         {
             echo "expected: $1"
-            echo "actual: $2"
+            echo "got: $2"
         } | flunk
     fi
 }
@@ -83,4 +83,10 @@ assert() {
     if ! "$@"; then
         flunk "failed: $@"
     fi
+}
+
+findfiles() {
+    grep_opts=$1
+    
+    find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "${PYENV_ROOT}/.git/*" ! -path "${PYENV_ROOT}/.github/*" ! -path "${PYENV_ROOT}/test/*" ! -path "${PYENV_ROOT}/man/*" ! -path "${PYENV_ROOT}/plugins/pyenv-multiuser/*" -prune -exec grep $grep_opts '/shims' {} \;
 }

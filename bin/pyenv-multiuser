@@ -18,9 +18,14 @@ backup_files() {
     fi
 
     SUB="plugins/pyenv-multiuser"
-    ALTER_FILES=$(find $PYENV_BASE -type f -exec grep -Hl '${PYENV_ROOT}/shims' {} \;)
+
     for filename in ${ALTER_FILES[@]}; do
         if [[ "$filename" == *"$SUB"* ]]; then
+            continue
+        fi
+
+        # make sure to ignore files in the git metadata
+        if [[ "$filename" == *".git"* ]]; then
             continue
         fi
 
@@ -51,8 +56,13 @@ alter_files() {
             continue
         fi
 
+        # make sure to ignore files in the git metadata
+        if [[ "$filename" == *".git"* ]]; then
+            continue
+        fi
+
         echo "Altering $filename"
-        sed -i'' 's/${PYENV_ROOT}\/shims/${PYENV_LOCAL_SHIM}/g' $filename
+        sed -i'' 's/${PYENV_ROOT}"\?'\''\?\/shims\/\?/${PYENV_LOCAL_SHIM}/g' $filename
     done
 
     # setup a file to check for to prevent double setups
@@ -97,7 +107,7 @@ update_multiuser() {
     fi
 
     # rescan to find the files that need to be changed
-    ALTER_FILES=$(grep -lr '${PYENV_ROOT}/shims' $PYENV_ROOT)
+    ALTER_FILES=$(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" ! -path "$PYENV_ROOT/plugins/pyenv-multiuser" -prune -exec grep -Hl '/shims' {} \;)
     echo "Performing file backup ..."
     backup_files
 
@@ -112,7 +122,7 @@ setup_multiuser() {
     fi
 
     # scan for the files that need changed
-    ALTER_FILES=$(find $PYENV_BASE -type f -exec grep -Hl '${PYENV_ROOT}/shims' {} \;)
+    ALTER_FILES=$(find ${PYENV_ROOT} -type f ! -name '*.md' ! -name '.git*' ! -path "$PYENV_ROOT/.git/*" ! -path "$PYENV_ROOT/.github/*" ! -path "$PYENV_ROOT/test/*" ! -path "$PYENV_ROOT/man/*" ! -path "$PYENV_ROOT/plugins/pyenv-multiuser" -prune -exec grep -Hl '/shims' {} \;)
     echo "Performing file backup ..."
     backup_files
 

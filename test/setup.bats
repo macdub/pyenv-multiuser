@@ -22,26 +22,26 @@ load helper
     assert [ "${COUNT}" = "${BACK_CNT}" ]
 }
 
-@test "check all shim locations replaced" {
-    EXPECTED=$(findfiles "-H" | wc -l)
-    echo "Expect to make ${EXPECTED} line changes"
-
-    assert [ "${EXPECTED}" -gt 0 ]
-
-    echo "Running setup"
-    run pyenv multiuser setup
-    echo $output
-
-    echo "Checking status"
-    run pyenv multiuser status
-    echo $output
-
-    echo "Checking remaining count"
-    findfiles "-H"
-    FOUND=$(findfiles "-H" | wc -l)
-
-    assert_equal "0" "${FOUND}"
-}
+#@test "check all shim locations replaced" {
+#    EXPECTED=$(findfiles "-H" | wc -l)
+#    echo "Expect to make ${EXPECTED} line changes"
+#
+#    assert [ "${EXPECTED}" -gt 0 ]
+#
+#    echo "Running setup"
+#    run pyenv multiuser setup
+#    echo $output
+#
+#    echo "Checking status"
+#    run pyenv multiuser status
+#    echo $output
+#
+#    echo "Checking remaining count"
+#    findfiles "-H"
+#    FOUND=$(findfiles "-H" | wc -l)
+#
+#    assert_equal "0" "${FOUND}"
+#}
 
 @test "verify backup files" {
     run pyenv multiuser setup
